@@ -1,0 +1,152 @@
+import os
+
+ Variables & File Handling
+
+def load_data_from_file(file_path):
+    data = []
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Assuming data is separated by commas
+                values = line.strip().split(',')
+                for value in values:
+                    try:
+                        data.append(float(value))   Convert to float for numerical data
+                    except ValueError:
+                        print(f"Warning: Non-numeric value found: {value}")
+                        continue
+    except FileNotFoundError:
+        print("Error: The file does not exist.")
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+    if not data:
+        print("Error: The file is empty.")
+        return None
+
+    return data
+Error Handling (Already integrated in load_data_from_file)
+
+Functions to calculate total, average, minimum, and maximum
+def calculate_total(data):
+    total = sum(data)
+    return total
+
+def calculate_average(data):
+    if len(data) == 0:
+        return 0
+    return sum(data) / len(data)
+
+def calculate_minimum(data):
+    return min(data)
+
+def calculate_maximum(data):
+    return max(data)
+
+ Operators & Loops
+def process_data(data):
+    total = 0
+    min_value = float('inf')
+    max_value = float('-inf')
+    count = 0
+    
+    for value in data:
+        total += value
+        if value < min_value:
+            min_value = value
+        if value > max_value:
+            max_value = value
+        count += 1
+    
+    average = total / count if count != 0 else 0
+    return total, average, min_value, max_value
+
+Conditional Statements
+def evaluate_performance(average, threshold=50):
+    if average > threshold:
+        return "High Performance"
+    else:
+        return "Needs Improvement"
+
+ Sets for categorical data (Assuming categorical data is in a separate file)
+def extract_unique_categories(file_path):
+    categories = set()
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                values = line.strip().split(',')
+                for value in values:
+                    categories.add(value.strip())  
+ Add unique categories to set
+    except FileNotFoundError:
+        print("Error: The category file does not exist.")
+    except Exception as e:
+        print(f"Error: {e}")
+    
+    return categories
+
+# 7. Object-Oriented Programming: DataSet Class
+class DataSet:
+    def __init__(self, data_file, category_file):
+        self.data_file = data_file
+        self.category_file = category_file
+        self.data = []
+        self.categories = set()
+
+    def load_data(self):
+        self.data = load_data_from_file(self.data_file)
+        if self.data is not None:
+            print("Data loaded successfully.")
+        else:
+            print("Failed to load data.")
+    
+    def calculate_statistics(self):
+        if not self.data:
+            print("No data to calculate statistics.")
+            return
+        self.total = calculate_total(self.data)
+        self.average = calculate_average(self.data)
+        self.min_value = calculate_minimum(self.data)
+        self.max_value = calculate_maximum(self.data)
+    
+    def display_results(self):
+        print("\nStatistics:")
+        print(f"Total: {self.total}")
+        print(f"Average: {self.average}")
+        print(f"Minimum: {self.min_value}")
+        print(f"Maximum: {self.max_value}")
+        print(evaluate_performance(self.average))
+    
+    def extract_unique_categories(self):
+        self.categories = extract_unique_categories(self.category_file)
+        print(f"\nUnique Categories: {len(self.categories)}")
+    
+    def save_results(self, report_file):
+        try:
+            with open(report_file, 'w') as file:
+                file.write("Dataset Analysis Report\n")
+                file.write("------------------------\n")
+                file.write(f"Total: {self.total}\n")
+                file.write(f"Average: {self.average}\n")
+                file.write(f"Minimum: {self.min_value}\n")
+                file.write(f"Maximum: {self.max_value}\n")
+                file.write(f"Performance: {evaluate_performance(self.average)}\n")
+                file.write(f"\nUnique Categories: {len(self.categories)}\n")
+                file.write("Categories: " + ', '.join(self.categories) + "\n")
+            print(f"Results saved to {report_file}")
+        except Exception as e:
+            print(f"Error saving report: {e}")
+
+# Example usage:
+data_file = 'data.csv'  # Provide the path to your data file
+category_file = 'categories.csv'  # Provide the path to your category file
+
+dataset = DataSet(data_file, category_file)
+
+dataset.load_data()
+dataset.calculate_statistics()
+dataset.display_results()
+dataset.extract_unique_categories()
+dataset.save_results('report.txt')
