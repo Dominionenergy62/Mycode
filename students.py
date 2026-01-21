@@ -236,4 +236,4 @@ Top Performer:roqeeb yusuff|cgpa:5.00
 
 
 select an option(1-5):5
- exiting system
+ exitingsystem.
